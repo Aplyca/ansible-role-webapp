@@ -1,0 +1,65 @@
+---
+- name: Make sure that the .ssh directory exists
+  file:
+    path: ~/.ssh
+    state: directory
+    mode: 0700
+
+- name: Send SSH config (host connections)
+  template:
+    src: home/ansible_user/.ssh/config.j2
+    dest: ~/.ssh/config
+    mode: 0600
+
+- name: Add webapp repo git key to remote user
+  copy:
+    src: "{{ webapp['repo']['key'] }}"
+    dest: "~/.ssh/{{ webapp['repo']['name'] }}"
+    mode: 0400
+
+- name: Make sure the live directory of the webapp is present
+  sudo: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0777
+  with_items:
+    - /var/www
+    - /mnt/storage/www
+
+- name: Make sure the current directory of the webapp is present
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "/mnt/storage/www/{{ machine['project'] | lower }}"
+    - "/var/www/{{ machine['project'] | lower }}/current"
+
+- name: Make sure the base symlink of the webapp is present
+  file:
+    src: "/mnt/storage/www/{{ machine['project'] | lower }}"
+    dest: "/var/www/{{ machine['project'] | lower }}/base"
+    state: link
+    force: yes
+
+- name: "Add/Update webapp repo, using {{ webapp['repo']['version'] }}"
+  git:
+    repo: "{{ webapp['repo']['name'] }}:{{ webapp['repo']['url'] }}"
+    dest: "/var/www/{{ machine['project'] | lower }}/base"
+    version: "{{ webapp['repo']['version'] }}"
+    update: no
+    accept_hostkey: true
+  tags:
+    - release
+
+- name: Sync files from base to current
+  shell: "rsync -azu --exclude '/var' /var/www/{{ machine['project'] | lower }}/base/ /var/www/{{ machine['project'] | lower }}/current/"
+  ignore_errors: yes
+  changed_when: False
+
+- name: Make sure the app symlink of the webapp is present
+  file:
+    src: "current"
+    dest: "/var/www/{{ machine['project'] | lower }}/app"
+    state: link

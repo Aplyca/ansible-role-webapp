@@ -1,0 +1,12 @@
+---
+php:
+  Date:
+    timezone: 'America/Bogota'
+
+webapp:
+  name: "webapp"
+  repo:
+    name: mywebsite
+    server: git.mywebsite.co
+    url: mywebsite.git
+    version: master
