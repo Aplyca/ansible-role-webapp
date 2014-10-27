@@ -1,12 +1,29 @@
 ---
-php:
-  Date:
-    timezone: 'America/Bogota'
-
 webapp:
   name: "webapp"
   repo:
-    name: mywebsite
-    server: git.mywebsite.co
-    url: mywebsite.git
+    server: github
+    url: Aplyca/ansible-role-webapp.git
     version: master
+
+apache:
+  virtualhosts:
+    -
+      ServerName: mywebapp.com
+      ServerAlias:
+        - "*.mywebapp.com"
+      DocumentRoot: "/var/www/{{ webapp['name'] | lower }}/app/tests/webapp/web"
+      ErrorLog: "log/mywebapp.com.error.log"
+      CustomLog: "log/mywebapp.com.log"
+      IncludeOptional: "/var/www/{{ webapp['name'] | lower }}/app/tests/webapp/virtualhost/*.vhinc"
+
+essentials:
+  ssh:
+    config:
+      -
+        Host: github
+        HostName: github.com
+        User: git
+        IdentityFile: github
+        IdentityFileSource: "~/.ssh/github"
+        StrictHostKeyChecking: "no"
