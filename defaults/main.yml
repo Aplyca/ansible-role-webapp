@@ -13,8 +13,8 @@ apache:
       ServerAlias:
         - "*.{{ webapp['name'] | lower }}.com"
       DocumentRoot: "/var/www/{{ webapp['name'] | lower }}/app/tests/webapp/web"
-      ErrorLog: "log/mywebapp.com.error.log"
-      CustomLog: "log/mywebapp.com.log"
+      ErrorLog: "/var/log/mywebapp.com.error.log"
+      CustomLog: "/var/log/mywebapp.com.log"
       IncludeOptional: "/var/www/{{ webapp['name'] | lower }}/app/tests/webapp/include.conf"
 
 essentials:
