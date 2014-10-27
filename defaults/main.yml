@@ -9,13 +9,13 @@ webapp:
 apache:
   virtualhosts:
     -
-      ServerName: mywebapp.com
+      ServerName: "{{ webapp['name'] | lower }}.com"
       ServerAlias:
-        - "*.mywebapp.com"
+        - "*.{{ webapp['name'] | lower }}.com"
       DocumentRoot: "/var/www/{{ webapp['name'] | lower }}/app/tests/webapp/web"
       ErrorLog: "log/mywebapp.com.error.log"
       CustomLog: "log/mywebapp.com.log"
-      IncludeOptional: "/var/www/{{ webapp['name'] | lower }}/app/tests/webapp/virtualhost/*.vhinc"
+      IncludeOptional: "/var/www/{{ webapp['name'] | lower }}/app/tests/webapp/include.conf"
 
 essentials:
   ssh:
