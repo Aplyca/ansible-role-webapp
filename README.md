@@ -41,7 +41,7 @@ cd tests;
 vagrant box add ubuntu/trusty64;
 vagrant up;
 ```
-You should see your WebApp runnig on http://localhost:8080
+You should see your WebApp runnig on http://webapp.com:8080
 
 ## License
 
