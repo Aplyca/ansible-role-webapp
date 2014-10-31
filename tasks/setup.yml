@@ -25,10 +25,16 @@
     state: link
     force: yes
 
+- name: Make sure the app symlink of the webapp is present
+  file:
+    src: "current"
+    dest: "/var/www/{{ webapp['name'] | lower }}/app"
+    state: link
+
 - name: "Add/Update webapp repo, using {{ webapp['repo']['version'] }}"
   git:
     repo: "{{ webapp['repo']['server'] }}:{{ webapp['repo']['url'] }}"
-    dest: "/var/www/{{ webapp['name'] | lower }}/base"
+    dest: "/var/www/{{ webapp['name'] | lower }}/app"
     version: "{{ webapp['repo']['version'] }}"
     update: no
     accept_hostkey: true
@@ -36,12 +42,10 @@
     - release
 
 - name: Sync files from base to current
-  shell: "rsync -azu --exclude '/var' /var/www/{{ webapp['name'] | lower }}/base/ /var/www/{{ webapp['name'] | lower }}/current/"
+  shell: "rsync -azu --exclude '/var' app/ base/"
+  args:
+    chdir: "/var/www/{{ webapp['name'] | lower }}"
   ignore_errors: yes
   changed_when: False
 
-- name: Make sure the app symlink of the webapp is present
-  file:
-    src: "current"
-    dest: "/var/www/{{ webapp['name'] | lower }}/app"
-    state: link
+

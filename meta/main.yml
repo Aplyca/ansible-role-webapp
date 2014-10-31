@@ -1,7 +1,7 @@
 ---
 dependencies:
-  - { role: mauricios.Essentials }
-  - { role: mauricios.LAMP }
+  - { role: mauricios.Essentials, tags: ["essentials"] }
+  - { role: mauricios.LAMP, tags: ["lamp"] }
 
 galaxy_info:
   author: mauricios

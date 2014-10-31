@@ -1,6 +1,7 @@
 ---
 webapp:
   name: "webapp"
+  app_dir: "/var/www/webapp/app"
   repo:
     server: github
     url: Aplyca/ansible-role-webapp.git
@@ -12,10 +13,10 @@ apache:
       ServerName: "{{ webapp['name'] | lower }}.com"
       ServerAlias:
         - "*.{{ webapp['name'] | lower }}.com"
-      DocumentRoot: "/var/www/{{ webapp['name'] | lower }}/app/tests/webapp/web"
+      DocumentRoot: "{{ webapp['name'] }}/tests/webapp/web"
       ErrorLog: "/var/log/{{ webapp['name'] | lower }}.com.error.log"
       CustomLog: "/var/log/{{ webapp['name'] | lower }}.com.log"
-      IncludeOptional: "/var/www/{{ webapp['name'] | lower }}/app/tests/webapp/include.conf"
+      IncludeOptional: "{{ webapp['name'] }}/tests/webapp/include.conf"
 
 essentials:
   ssh:
