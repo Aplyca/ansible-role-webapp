@@ -6,6 +6,7 @@ webapp:
     server: github
     url: Aplyca/ansible-role-webapp.git
     version: master
+  sync_exclude: "/var"
 
 apache:
   virtualhosts:

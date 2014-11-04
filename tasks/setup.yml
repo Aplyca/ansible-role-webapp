@@ -41,8 +41,8 @@
   tags:
     - release
 
-- name: Sync files from base to current
-  shell: "rsync -azu --exclude '/var' app/ base/"
+- name: Sync files from current to base
+  shell: "rsync -azu --exclude {{ webapp['sync_exclude'] }} app/ base/"
   args:
     chdir: "/var/www/{{ webapp['name'] | lower }}"
   ignore_errors: yes
