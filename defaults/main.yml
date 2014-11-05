@@ -6,7 +6,6 @@ webapp:
     server: github
     url: Aplyca/ansible-role-webapp.git
     version: master
-  sync_exclude: "/var"
 
 apache:
   virtualhosts:
@@ -15,8 +14,8 @@ apache:
       ServerAlias:
         - "*.{{ webapp['name'] | lower }}.com"
       DocumentRoot: "{{ webapp['name'] }}/tests/webapp/web"
-      ErrorLog: "{{ apache['logs_dir'] }}/{{ webapp['name'] | lower }}.com.error.log"
-      CustomLog: "{{ apache['logs_dir'] }}/{{ webapp['name'] | lower }}.com.log"
+      ErrorLog: "{{ apache_logs_dir }}/{{ webapp['name'] | lower }}.com.error.log"
+      CustomLog: "{{ apache_logs_dir }}/{{ webapp['name'] | lower }}.com.log"
       IncludeOptional: "{{ webapp['name'] }}/tests/webapp/include.conf"
 
 essentials:
