@@ -1,7 +1,6 @@
 ---
 webapp:
   name: "webapp"
-  app_dir: "/var/www/webapp/app"
   repo:
     server: github
     url: Aplyca/ansible-role-webapp.git

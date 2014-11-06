@@ -91,7 +91,7 @@
 - name: Create symlinks to base
   file:
     src: "{{ item.src }}"
-    dest: "{{ webapp['app_dir'] }}/{{ item.dest }}"
+    dest: "/var/www/{{ webapp['name'] }}/app/{{ item.dest }}"
     state: link
     force: yes
   with_items: webapp["links_to_base"]
