@@ -1,7 +1,4 @@
 ---
-
-- debug: var=webapp
-
 - name: Make sure the mounted directory of the webapp is present
   sudo: yes
   file:
