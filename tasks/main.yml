@@ -1,5 +1,5 @@
 ---
-- name: Make sure the mounted directory of the webapp is present
+- name: Make sure the www directory is present
   sudo: yes
   file:
     path: "{{ item }}"
@@ -9,11 +9,15 @@
     - /var/www
 
 - name: Make sure the current directory of the webapp is present
+  sudo: yes
   file:
     path: "{{ item }}"
     state: directory
     mode: 0755
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
   with_items:
+    - "{{ webapp['base_symlink'] }}"
     - "/var/www/{{ webapp['name'] }}/releases/current"
 
 - name: Make sure the app symlink of the webapp is present
@@ -43,7 +47,6 @@
     - base
 
 - name: Ensure app directories exist
-  sudo: yes
   file:
     path: "/var/www/{{ webapp['name'] }}/{{ item }}"
     state: directory
@@ -92,3 +95,11 @@
     state: link
     force: yes
   with_items: webapp["links_to_base"]
+
+- name: Create internal symlinks
+  file:
+    src: "{{ item.src }}"
+    dest: "/var/www/{{ webapp['name'] }}/app/{{ item.dest }}"
+    state: link
+    force: yes
+  with_items: webapp['internal_links']
