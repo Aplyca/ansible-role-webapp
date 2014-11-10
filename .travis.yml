@@ -6,9 +6,6 @@ addons:
   hosts:
     - webapp.com
 
-notification:
-  email: false
-
 env:
   - PLAYBOOK=playbook.yml
 
@@ -37,3 +34,7 @@ script:
   - php -i | grep -q 'mysql' && (echo 'PHP MySQL installed' && exit 0) || (echo 'PHP MySQL not installed' && exit 1)
   - apachectl -M | grep -q 'php' && (echo 'PHP module for Apache installed' && exit 0) || (echo 'HP module for Apache not installed' && exit 1)
   - curl http://myapp.com
+
+
+notification:
+  email: false

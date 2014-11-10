@@ -2,10 +2,8 @@
 webapp:
   name: "webapp"
   repo:
-    server: git@github.com
-    url: Aplyca/ansible-role-webapp.git
+    url: https://github.com/Aplyca/ansible-role-webapp.git
     version: master
-
   base_symlink: "/mnt/storage/www/webapp"
   ACL_dirs: []
   app_dirs: []

@@ -37,7 +37,7 @@
 
 - name: "Add/Update webapp repo"
   git:
-    repo: "{{ webapp['repo']['server'] }}:{{ webapp['repo']['url'] }}"
+    repo: "{{ webapp['repo']['url'] }}"
     dest: "/var/www/{{ webapp['name'] }}/{{ item }}"
     version: "{{ webapp['repo']['version'] }}"
     update: no
