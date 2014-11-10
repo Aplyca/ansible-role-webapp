@@ -1,6 +1,7 @@
 # Ansible Role: WebApp
 
 [![Build Status](https://travis-ci.org/Aplyca/ansible-role-webapp.svg?branch=master)](https://travis-ci.org/Aplyca/ansible-role-webapp)
+[![Circle CI](https://circleci.com/gh/Aplyca/ansible-role-webapp.png?style=badge)](https://circleci.com/gh/Aplyca/ansible-role-webapp)
 
 Ansible Role that installs an configure a WebApp (website) on Debian/Ubuntu.
 
