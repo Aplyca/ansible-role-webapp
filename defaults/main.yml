@@ -8,7 +8,7 @@ webapp:
   base_symlink: "/mnt/storage/www/webapp"
   ACL_dirs: []
   app_dirs: []
-    webserver_dirs: []
+  webserver_dirs: []
   links_to_base: []
   internal_links: []
 
