@@ -11,6 +11,14 @@ webapp:
   links_to_base: []
   internal_links: []
 
+php:
+  opcache:
+    enable_file_override: 1
+    interned_strings_buffer: 16
+    revalidate_path: 1
+    revalidate_freq: 60
+    fast_shutdown: 1
+
 apache:
   virtualhosts:
     -
