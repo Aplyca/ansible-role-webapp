@@ -38,13 +38,10 @@
 - name: "Add/Update webapp repo"
   git:
     repo: "{{ webapp['repo']['url'] }}"
-    dest: "/var/www/{{ webapp['name'] }}/{{ item }}"
+    dest: "/var/www/{{ webapp['name'] }}/app"
     version: "{{ webapp['repo']['version'] }}"
     update: yes
     accept_hostkey: true
-  with_items:
-    - app
-    - base
 
 - name: Ensure app directories exist
   file:
