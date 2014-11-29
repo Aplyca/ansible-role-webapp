@@ -40,7 +40,7 @@
     repo: "{{ webapp['repo']['url'] }}"
     dest: "/var/www/{{ webapp['name'] }}/{{ item }}"
     version: "{{ webapp['repo']['version'] }}"
-    update: no
+    update: yes
     accept_hostkey: true
   with_items:
     - app
