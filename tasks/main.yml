@@ -6,7 +6,7 @@
     state: directory
     mode: 0777
   with_items:
-    - /var/www
+    - "/var/www"
 
 - name: Make sure the current directory of the webapp is present
   sudo: yes
@@ -19,6 +19,7 @@
   with_items:
     - "{{ webapp['base_symlink'] }}"
     - "/var/www/{{ webapp['name'] }}/releases/current"
+  when: webapp['base_symlink'] is defined
 
 - name: Make sure the app symlink of the webapp is present
   file:
@@ -26,6 +27,7 @@
     dest: "/var/www/{{ webapp['name'] }}/app"
     state: link
     force: yes
+  when: webapp['base_symlink'] is defined
 
 - name: Make sure the base symlink of the webapp is present
   file:
@@ -42,6 +44,7 @@
     version: "{{ webapp['repo']['version'] }}"
     update: yes
     accept_hostkey: true
+  when: webapp['repo'] is defined
 
 - name: Ensure app directories exist
   file:
