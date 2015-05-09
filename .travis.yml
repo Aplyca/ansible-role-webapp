@@ -1,4 +1,7 @@
 ---
+notifications:
+  email: false
+
 language: python
 python: "2.7"
 
@@ -34,8 +37,5 @@ script:
   - php -v
   - php -i | grep -q 'mysql' && (echo 'PHP MySQL installed' && exit 0) || (echo 'PHP MySQL not installed' && exit 1)
   - apachectl -M | grep -q 'php' && (echo 'PHP module for Apache installed' && exit 0) || (echo 'HP module for Apache not installed' && exit 1)
-  - curl http://myapp.com
+  - curl http://webapp.com
 
-
-notification:
-  email: false
