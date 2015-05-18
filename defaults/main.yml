@@ -17,12 +17,12 @@ php:
 
 apache:
   virtualhosts:
-    -
-      ServerName: "{{ webapp['name'] | lower }}.com"
+    - ServerName: "{{ webapp['name'] | lower }}.com"
       ServerAlias:
         - "*.{{ webapp['name'] | lower }}.com"
       DocumentRoot: "/var/www/{{ webapp['name'] }}/web"
       ErrorLog: "{{ apache_logs_dir }}/{{ webapp['name'] | lower }}.com.error.log"
       CustomLog: "{{ apache_logs_dir }}/{{ webapp['name'] | lower }}.com.log"
-      IncludeOptional: "/var/www/{{ webapp['name'] }}/include.conf"
+      IncludeOptional:
+        - "/var/www/{{ webapp['name'] }}/include.conf"
 
