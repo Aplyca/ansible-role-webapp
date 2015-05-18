@@ -23,6 +23,7 @@ install:
 
 before_script:
   - ln -s ansible-role-webapp ../aplyca.WebApp
+  - sudo mkdir -p /var/www
   - sudo ln -s ansible-role-webapp/tests/webapp /var/www/webapp
 
 script:
