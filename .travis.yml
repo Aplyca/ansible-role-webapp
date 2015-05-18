@@ -22,7 +22,7 @@ install:
   - sudo pip install ansible
 
 before_script:
-  - ln -s ansible-role-webapp ../mauricios.WebApp
+  - ln -s ansible-role-webapp ../aplyca.WebApp
   - sudo ln -s ansible-role-webapp/tests/webapp /var/www/webapp
 
 script:

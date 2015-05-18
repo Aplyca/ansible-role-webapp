@@ -1,10 +1,10 @@
 ---
 dependencies:
-  - { role: mauricios.Essentials, tags: ["essentials"] }
-  - { role: mauricios.LAMP, tags: ["lamp"] }
+  - { role: aplyca.Essentials, tags: ["essentials"] }
+  - { role: aplyca.LAMP, tags: ["lamp"] }
 
 galaxy_info:
-  author: mauricios
+  author: aplyca
   description: WebApp on Debian/Ubuntu.
   company: "Aplyca SAS"
   license: "license (BSD, MIT)"

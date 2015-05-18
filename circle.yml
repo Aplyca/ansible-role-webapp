@@ -14,7 +14,7 @@ machine:
 
 test:
   pre:
-    - sudo ln -s ansible-role-webapp ../../mauricios.WebApp
+    - sudo ln -s ansible-role-webapp ../../aplyca.WebApp
     - sudo ln -s ansible-role-webapp/tests/webapp /var/www/webapp
   override:
     # Install dependencies
