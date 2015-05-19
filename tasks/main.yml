@@ -41,7 +41,7 @@
   git:
     repo: "{{ webapp['repo']['url'] }}"
     dest: "/var/www/{{ webapp['name'] }}/app"
-    version: "{{ webapp['repo']['version'] }}"
+    version: "{{ webapp['repo']['version'] | default('master') }}"
     update: yes
     accept_hostkey: true
   when: webapp['repo'] is defined
