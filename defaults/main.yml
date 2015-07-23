@@ -16,6 +16,9 @@ php:
     revalidate_path: 1
     revalidate_freq: 60
     fast_shutdown: 1
+  core:
+    realpath_cache_size: 2046K
+    realpath_cache_ttl: 3600
 
 apache:
   virtualhosts:
