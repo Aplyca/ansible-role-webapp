@@ -1,76 +1,79 @@
 ---
-- name: Make sure the www directory is present
+- name: Make sure the installation path exists is present
   sudo: yes
   file:
-    path: "{{ item }}"
+    path: "{{ webapp['installation_path'] }}"
     state: directory
     mode: 0777
-  with_items:
-    - "/var/www"
+  when: webapp['installation_path'] is defined and webapp['installation_path'] != None
 
 - name: Make sure the current directory of the webapp is present
-  sudo: yes
   file:
-    path: "{{ item }}"
+    path: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/{{ item }}"
     state: directory
     mode: 0755
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
   with_items:
-    - "{{ webapp['base_symlink'] }}"
-    - "/var/www/{{ webapp['name'] }}/releases/current"
-  when: webapp['base_symlink'] is defined
+    - "releases/current"
+  when: webapp['installation_path'] is defined and webapp['installation_path'] != None
 
 - name: Make sure the app symlink of the webapp is present
   file:
     src: "releases/current"
-    dest: "/var/www/{{ webapp['name'] }}/app"
+    dest: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/app"
     state: link
     force: yes
-  when: webapp['base_symlink'] is defined
-
-- name: Make sure the base symlink of the webapp is present
-  file:
-    src: "{{ webapp['base_symlink'] }}"
-    dest: "/var/www/{{ webapp['name'] }}/base"
-    state: link
-    force: yes
-  when: webapp['base_symlink'] is defined and webapp['base_symlink']
+  when: webapp['installation_path'] is defined and webapp['installation_path'] != None
 
 - name: "Add/Update webapp repo"
   git:
     repo: "{{ webapp['repo']['url'] }}"
-    dest: "/var/www/{{ webapp['name'] }}/app"
+    dest: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/app"
     version: "{{ webapp['repo']['version'] | default('master') }}"
     update: yes
     accept_hostkey: true
-  when: webapp['repo']['url'] is defined and webapp['repo']['url'] != null
+  when: webapp['repo']['url'] is defined and webapp['repo']['url'] != null and webapp['installation_path'] is defined and webapp['installation_path'] != None
 
 - name: Ensure app directories exist
   file:
-    path: "/var/www/{{ webapp['name'] }}/{{ item }}"
+    path: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/{{ item }}"
     state: directory
   with_items: webapp['app_dirs']
 
-- name: Ensure webserver directories exist
-  sudo: yes
+- name: Make sure the Storage directories are present
   file:
-    path: "/var/www/{{ webapp['name'] }}/{{ item }}"
+    path: "{{ item }}"
     state: directory
-    mode: 0777
-    owner: "{{ apache['user'] }}"
-    group: "{{ apache['user'] }}"
-  with_items: webapp['webserver_dirs']
+  with_items: webapp['storage']
 
-- name: Make sure the the ACLs directories are present
+- name: Make sure the storage ACLs with default and webserver user are present
+  acl:
+     name: "{{ item }}"
+     entity: "{{ apache['user'] }}"
+     etype: user
+     permissions: rxw
+     default: yes
+     state: present
+  with_items: webapp["storage"]
+
+- name: Make sure the storage ACLs with current user are present
+  acl:
+     name: "{{ item }}"
+     entity: "{{ ansible_user_id }}"
+     etype: user
+     permissions: rxw
+     default: yes
+     state: present
+  with_items: webapp["storage"]
+
+- name: Make sure the app directories with ACLs are present
   file:
-    path: "/var/www/{{ webapp['name'] }}/{{ item }}"
+    path: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/{{ item }}"
     state: directory
   with_items: webapp['ACL_dirs']
 
-- name: Make sure the file system ACLs with default and webserver user are present
+- name: Make sure the ACLs for app directories with default and webserver user are present
   acl:
-     name: "/var/www/{{ webapp['name'] }}/{{ item }}"
+     name: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/{{ item }}"
      entity: "{{ apache['user'] }}"
      etype: user
      permissions: rxw
@@ -78,9 +81,9 @@
      state: present
   with_items: webapp["ACL_dirs"]
 
-- name: Make sure the file system ACLs with current user are present
+- name: Make sure the ACLs for app directories with current user are present
   acl:
-     name: "/var/www/{{ webapp['name'] }}/{{ item }}"
+     name: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/{{ item }}"
      entity: "{{ ansible_user_id }}"
      etype: user
      permissions: rxw
@@ -88,18 +91,18 @@
      state: present
   with_items: webapp["ACL_dirs"]
 
-- name: Create symlinks to base
+- name: Create symlinks to storage
   file:
     src: "{{ item.src }}"
-    dest: "/var/www/{{ webapp['name'] }}/app/{{ item.dest }}"
+    dest: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/app/{{ item.dest }}"
     state: link
     force: yes
-  with_items: webapp["links_to_base"]
+  with_items: webapp["links_to_storage"]
 
 - name: Create internal symlinks
   file:
     src: "{{ item.src }}"
-    dest: "/var/www/{{ webapp['name'] }}/app/{{ item.dest }}"
+    dest: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/app/{{ item.dest }}"
     state: link
     force: yes
   with_items: webapp['internal_links']

@@ -2,11 +2,13 @@
 webapp:
   repo:
     url: "https://github.com/Aplyca/ansible-role-webapp.git"
+    version: master
   name: "webapp"
+  installation_path: /var/www
   ACL_dirs: []
   app_dirs: []
-  webserver_dirs: []
-  links_to_base: []
+  storage: []
+  links_to_storage: []
   internal_links: []
 
 php:
@@ -30,4 +32,3 @@ apache:
       CustomLog: "{{ apache_logs_dir }}/{{ webapp['name'] | lower }}.com.log"
       IncludeOptional:
         - "/var/www/{{ webapp['name'] }}/app/tests/webapp/include.conf"
-
