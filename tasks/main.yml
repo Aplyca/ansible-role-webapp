@@ -31,7 +31,7 @@
     version: "{{ webapp['repo']['version'] | default('master') }}"
     update: yes
     accept_hostkey: true
-  when: webapp['repo']['url'] is defined and webapp['repo']['url'] != null and webapp['installation_path'] is defined and webapp['installation_path'] != None
+  when: webapp['repo']['url'] is defined and webapp['repo']['url'] != None and webapp['installation_path'] is defined and webapp['installation_path'] != None
 
 - name: Ensure app directories exist
   file:
