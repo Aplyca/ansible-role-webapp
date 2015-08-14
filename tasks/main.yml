@@ -40,9 +40,12 @@
   with_items: webapp['app_dirs']
 
 - name: Make sure the Storage directories are present
+  sudo: yes
   file:
     path: "{{ item }}"
     state: directory
+    mode: 775
+    owner: "{{ ansible_user_id }}"
   with_items: webapp['storage']
 
 - name: Make sure the storage ACLs with default and webserver user are present
