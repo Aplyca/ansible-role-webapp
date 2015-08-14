@@ -44,7 +44,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: 775
+    mode: 0775
     owner: "{{ ansible_user_id }}"
   with_items: webapp['storage']
 
