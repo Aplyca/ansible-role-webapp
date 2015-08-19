@@ -48,6 +48,15 @@
     owner: "{{ ansible_user_id }}"
   with_items: webapp['storage']
 
+- name: Make sure the storage ACLs for webserver user are present
+  acl:
+     name: "{{ item }}"
+     entity: "{{ apache['user'] }}"
+     etype: user
+     permissions: rxw
+     state: present
+  with_items: webapp["storage"]
+
 - name: Make sure the storage ACLs with default and webserver user are present
   acl:
      name: "{{ item }}"
@@ -73,6 +82,15 @@
     path: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/{{ item }}"
     state: directory
   with_items: webapp['ACL_dirs']
+
+- name: Make sure the ACLs for app directories for webserver user are present
+  acl:
+     name: "{{ webapp['installation_path'] }}/{{ webapp['name'] }}/{{ item }}"
+     entity: "{{ apache['user'] }}"
+     etype: user
+     permissions: rxw
+     state: present
+  with_items: webapp["ACL_dirs"]
 
 - name: Make sure the ACLs for app directories with default and webserver user are present
   acl:
