@@ -10,6 +10,8 @@ webapp:
   storage: []
   links_to_storage: []
   internal_links: []
+  config: []
+  install_commands: []
 
 php:
   opcache:
@@ -17,7 +19,6 @@ php:
     interned_strings_buffer: 16
     revalidate_path: 1
     revalidate_freq: 60
-    fast_shutdown: 1
   core:
     realpath_cache_size: 2046K
     realpath_cache_ttl: 3600
@@ -27,8 +28,6 @@ apache:
     - ServerName: "{{ webapp['name'] | lower }}.com"
       ServerAlias:
         - "*.{{ webapp['name'] | lower }}.com"
-      DocumentRoot: "/var/www/{{ webapp['name'] }}/app/tests/webapp/web"
-      ErrorLog: "{{ apache_logs_dir }}/{{ webapp['name'] | lower }}.com.error.log"
-      CustomLog: "{{ apache_logs_dir }}/{{ webapp['name'] | lower }}.com.log"
+      DocumentRoot: "/var/www/{{ webapp['name'] }}/current/tests/webapp/web"
       IncludeOptional:
-        - "/var/www/{{ webapp['name'] }}/app/tests/webapp/include.conf"
+        - "/var/www/{{ webapp['name'] }}/current/tests/webapp/include.conf"

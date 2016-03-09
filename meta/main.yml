@@ -1,7 +1,7 @@
 ---
 dependencies:
-  - { role: aplyca.Essentials, tags: ["essentials"] }
-  - { role: aplyca.LAMP, tags: ["lamp"] }
+  - { role: Aplyca.Essentials, tags: ["essentials"] }
+  - { role: Aplyca.LAMP, tags: ["lamp"] }
 
 galaxy_info:
   author: aplyca
