@@ -1,18 +1,11 @@
 ---
 webapp:
-  repo:
-    url: "https://github.com/Aplyca/ansible-role-webapp.git"
-    version: master
-  name: "webapp"
   installation_path: /var/www
-  ACL_dirs: []
-  app_dirs: []
-  storage: []
-  links_to_storage: []
-  internal_links: []
-  config: []
-  install_commands: []
-
+  apps:
+    - name: app
+      repo:
+        url: "https://github.com/Aplyca/ansible-role-webapp.git"
+        
 php:
   opcache:
     enable_file_override: 1
@@ -25,9 +18,9 @@ php:
 
 apache:
   virtualhosts:
-    - ServerName: "{{ webapp['name'] | lower }}.com"
+    - ServerName: "app.com"
       ServerAlias:
-        - "*.{{ webapp['name'] | lower }}.com"
-      DocumentRoot: "/var/www/{{ webapp['name'] }}/current/tests/webapp/web"
+        - "*.app.com"
+      DocumentRoot: "{{ webapp.installation_path }}/app/current/tests/webapp/web"
       IncludeOptional:
-        - "/var/www/{{ webapp['name'] }}/current/tests/webapp/include.conf"
+        - "{{ webapp.installation_path }}/app/current/tests/webapp/include.conf"

@@ -1,2 +1,4 @@
 .vagrant
 custom*
+.vault
+playbooks.retry
