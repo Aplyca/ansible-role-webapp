@@ -7,10 +7,6 @@
     mode: 0777
     owner: "{{ ansible_user_id }}"
 
-- name: "Install App"
+- name: "Install Apps"
   include: app.yml
   with_items: "{{ webapp.apps }}"
-  
-- debug:
-    var=webapp
-  tags: vars  

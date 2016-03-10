@@ -1,21 +1,24 @@
 ---
-- name: App | set app variable
+- name: Install app | set app variable
   set_fact: app="{{ item }}"
+
+- debug:
+    msg: "Installing app '{{ app }}'"
   
-- name: Make sure the current directory of the webapp is present
+- name: Install app | Make sure the current directory of the webapp is present
   file:
     path: "{{ webapp.installation_path }}/{{ app.name }}/releases/current"
     state: directory
     mode: 0755
 
-- name: Make sure the app symlink of the webapp is present
+- name: Install app | Make sure the app symlink of the webapp is present
   file:
     src: "releases/current"
     dest: "{{ webapp.installation_path }}/{{ app.name }}/current"
     state: link
     force: yes
 
-- name: "Add/Update webapp repo"
+- name: "Install app | Add/Update webapp repo"
   git:
     repo: "{{ app.repo.url }}"
     dest: "{{ webapp.installation_path }}/{{ app.name }}/current"
@@ -25,13 +28,13 @@
   when: app.repo.url is defined and app.repo.url != None
   tags: pull
 
-- name: Ensure app directories exist
+- name: Install app | Ensure app directories exist
   file:
     path: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
     state: directory
   with_items: "{{ app.app_dirs | default([]) }}"
 
-- name: Make sure the Storage directories are present
+- name: Install app | Make sure the Storage directories are present
   become: yes
   file:
     path: "{{ item }}"
@@ -40,7 +43,7 @@
     owner: "{{ ansible_user_id }}"
   with_items: "{{ app.storage | default([]) }}"
 
-- name: Make sure the storage ACLs for webserver user are present
+- name: Install app | Make sure the storage ACLs for webserver user are present
   acl:
      name: "{{ item }}"
      entity: "{{ apache.user }}"
@@ -49,7 +52,7 @@
      state: present
   with_items: "{{ app.storage | default([]) }}"
 
-- name: Make sure the storage ACLs with default and webserver user are present
+- name: Install app | Make sure the storage ACLs with default and webserver user are present
   acl:
      name: "{{ item }}"
      entity: "{{ apache.user }}"
@@ -59,7 +62,7 @@
      state: present
   with_items: "{{ app.storage | default([]) }}"
 
-- name: Make sure the storage ACLs with current user are present
+- name: Install app | Make sure the storage ACLs with current user are present
   acl:
      name: "{{ item }}"
      entity: "{{ ansible_user_id }}"
@@ -69,13 +72,13 @@
      state: present
   with_items: "{{ app.storage | default([]) }}"
 
-- name: Make sure the app directories with ACLs are present
+- name: Install app | Make sure the app directories with ACLs are present
   file:
     path: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
     state: directory
   with_items: "{{ app.ACL_dirs | default([]) }}"
 
-- name: Make sure the ACLs for app directories for webserver user are present
+- name: Install app | Make sure the ACLs for app directories for webserver user are present
   acl:
      name: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
      entity: "{{ apache.user }}"
@@ -84,7 +87,7 @@
      state: present
   with_items: "{{ app.ACL_dirs | default([]) }}"
 
-- name: Make sure the ACLs for app directories with default and webserver user are present
+- name: Install app | Make sure the ACLs for app directories with default and webserver user are present
   acl:
      name: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
      entity: "{{ apache.user }}"
@@ -94,7 +97,7 @@
      state: present
   with_items: "{{ app.ACL_dirs | default([]) }}"
 
-- name: Make sure the ACLs for app directories with current user are present
+- name: Install app | Make sure the ACLs for app directories with current user are present
   acl:
      name: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
      entity: "{{ ansible_user_id }}"
@@ -104,7 +107,7 @@
      state: present
   with_items: "{{ app.ACL_dirs | default([]) }}"
 
-- name: Create symlinks to storage
+- name: Install app | Create symlinks to storage
   file:
     src: "{{ item.src }}"
     dest: "{{ webapp.installation_path }}/{{ app.name }}/current/{{ item.dest }}"
@@ -112,7 +115,7 @@
     force: yes
   with_items: "{{ app.links_to_storage | default([]) }}"
 
-- name: Create internal symlinks
+- name: Install app | Create internal symlinks
   file:
     src: "{{ item.src }}"
     dest: "{{ webapp.installation_path }}/{{ app.name }}/current/{{ item.dest }}"
@@ -120,7 +123,7 @@
     force: yes
   with_items: "{{ app.internal_links | default([]) }}"
 
-- name: Ensure installation settings are present
+- name: Install app | Ensure installation settings are present
   template:
     src: "config.j2"
     dest: "{{ webapp.installation_path }}/{{ app.name }}/current/{{ item.dest }}"
@@ -132,7 +135,7 @@
 
 #- pause: prompt="Make sure the above commands are correct, they will be executed."
 
-- name: Run install commands
+- name: Install app | Run install commands
   shell: "{{ item }}"
   args:
     chdir: "/var/www/{{ app.name }}/current"
