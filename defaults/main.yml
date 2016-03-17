@@ -2,10 +2,10 @@
 webapp:
   installation_path: /var/www
   apps:
-    - name: app
+    app:
       repo:
         url: "https://github.com/Aplyca/ansible-role-webapp.git"
-        
+
 php:
   opcache:
     enable_file_override: 1

@@ -1,27 +1,27 @@
 ---
 - name: Install app | set app variable
-  set_fact: app="{{ item }}"
+  set_fact: app="{{ item.value }}"
 
 - debug:
-    msg: "Installing app '{{ app }}'"
-  
+    msg: "Installing app '{{ item.key }}'"
+
 - name: Install app | Make sure the current directory of the webapp is present
   file:
-    path: "{{ webapp.installation_path }}/{{ app.name }}/releases/current"
+    path: "{{ webapp.installation_path }}/{{ item.key }}/releases/current"
     state: directory
     mode: 0755
 
 - name: Install app | Make sure the app symlink of the webapp is present
   file:
     src: "releases/current"
-    dest: "{{ webapp.installation_path }}/{{ app.name }}/current"
+    dest: "{{ webapp.installation_path }}/{{ item.key }}/current"
     state: link
     force: yes
 
 - name: "Install app | Add/Update webapp repo"
   git:
     repo: "{{ app.repo.url }}"
-    dest: "{{ webapp.installation_path }}/{{ app.name }}/current"
+    dest: "{{ webapp.installation_path }}/{{ item.key }}/current"
     version: "{{ app.repo.version | default('master') }}"
     update: yes
     accept_hostkey: true
@@ -30,7 +30,7 @@
 
 - name: Install app | Ensure app directories exist
   file:
-    path: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
+    path: "{{ webapp.installation_path }}/{{ item.key }}/{{ item }}"
     state: directory
   with_items: "{{ app.app_dirs | default([]) }}"
 
@@ -74,13 +74,13 @@
 
 - name: Install app | Make sure the app directories with ACLs are present
   file:
-    path: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
+    path: "{{ webapp.installation_path }}/{{ item.key }}/{{ item }}"
     state: directory
   with_items: "{{ app.ACL_dirs | default([]) }}"
 
 - name: Install app | Make sure the ACLs for app directories for webserver user are present
   acl:
-     name: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
+     name: "{{ webapp.installation_path }}/{{ item.key }}/{{ item }}"
      entity: "{{ apache.user }}"
      etype: user
      permissions: rxw
@@ -89,7 +89,7 @@
 
 - name: Install app | Make sure the ACLs for app directories with default and webserver user are present
   acl:
-     name: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
+     name: "{{ webapp.installation_path }}/{{ item.key }}/{{ item }}"
      entity: "{{ apache.user }}"
      etype: user
      permissions: rxw
@@ -99,7 +99,7 @@
 
 - name: Install app | Make sure the ACLs for app directories with current user are present
   acl:
-     name: "{{ webapp.installation_path }}/{{ app.name }}/{{ item }}"
+     name: "{{ webapp.installation_path }}/{{ item.key }}/{{ item }}"
      entity: "{{ ansible_user_id }}"
      etype: user
      permissions: rxw
@@ -110,7 +110,7 @@
 - name: Install app | Create symlinks to storage
   file:
     src: "{{ item.src }}"
-    dest: "{{ webapp.installation_path }}/{{ app.name }}/current/{{ item.dest }}"
+    dest: "{{ webapp.installation_path }}/{{ item.key }}/current/{{ item.dest }}"
     state: link
     force: yes
   with_items: "{{ app.links_to_storage | default([]) }}"
@@ -118,7 +118,7 @@
 - name: Install app | Create internal symlinks
   file:
     src: "{{ item.src }}"
-    dest: "{{ webapp.installation_path }}/{{ app.name }}/current/{{ item.dest }}"
+    dest: "{{ webapp.installation_path }}/{{ item.key }}/current/{{ item.dest }}"
     state: link
     force: yes
   with_items: "{{ app.internal_links | default([]) }}"
@@ -126,7 +126,7 @@
 - name: Install app | Ensure installation settings are present
   template:
     src: "config.j2"
-    dest: "{{ webapp.installation_path }}/{{ app.name }}/current/{{ item.dest }}"
+    dest: "{{ webapp.installation_path }}/{{ item.key }}/current/{{ item.dest }}"
     follow: yes
   with_items: "{{ app.config | default([]) }}"
   when: item.dest is defined
@@ -138,7 +138,7 @@
 - name: Install app | Run install commands
   shell: "{{ item }}"
   args:
-    chdir: "/var/www/{{ app.name }}/current"
+    chdir: "/var/www/{{ item.key }}/current"
   environment:
     SYMFONY_ENV: prod
   ignore_errors: yes
