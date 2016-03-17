@@ -6,10 +6,9 @@
     state: directory
     mode: 0777
     owner: "{{ ansible_user_id }}"
-  tags: apps    
+  tags: apps
 
 - name: "Install Apps"
   include: app.yml
   with_dict: "{{ webapp.apps }}"
-  when: item.value.enabled is not defined
   tags: apps
