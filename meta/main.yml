@@ -4,7 +4,7 @@ dependencies:
   - { role: Aplyca.LAMP, tags: ["lamp"] }
 
 galaxy_info:
-  author: aplyca
+  author: Aplyca
   description: WebApp on Debian/Ubuntu.
   company: "Aplyca SAS"
   license: "license (BSD, MIT)"

@@ -1,2 +1,0 @@
-aplyca.Essentials
-aplyca.LAMP
