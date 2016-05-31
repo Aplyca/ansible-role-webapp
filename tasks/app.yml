@@ -1,10 +1,10 @@
 ---
 - name: Install app | set app variable
-  set_fact: app="{{ item.value }}"
+  set_fact: app="{{ app_item.value }}"
   tags: config
 
 - name: Install app | set name variable
-  set_fact: name="{{ item.key }}"
+  set_fact: name="{{ app_item.key }}"
   tags: config
 
 - debug:

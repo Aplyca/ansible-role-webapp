@@ -11,4 +11,6 @@
 - name: "Install Apps"
   include: app.yml
   with_dict: "{{ webapp.apps }}"
+  loop_control:
+    loop_var: app_item
   tags: apps
