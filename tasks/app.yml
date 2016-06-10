@@ -1,15 +1,15 @@
 ---
 - name: Install app | set app variable
   set_fact: app="{{ app_item.value }}"
-  tags: config
+  tags: always
 
 - name: Install app | set name variable
   set_fact: name="{{ app_item.key }}"
-  tags: config
+  tags: always
 
 - debug:
     msg: "Installing app '{{ name }}'"
-  tags: config
+  tags: always
 
 - block:
     - name: Install app | Make sure the current directory of the webapp is present
@@ -24,6 +24,17 @@
         dest: "{{ webapp.installation_path }}/{{ name }}/current"
         state: link
         force: yes
+
+    - name: Install app | Run pre install commands
+      shell: "{{ item }}"
+      args:
+        chdir: "/var/www/{{ name }}/current"
+      environment:
+        SYMFONY_ENV: prod
+      ignore_errors: yes
+      changed_when: False
+      with_items: "{{ app.pre_commands | default([]) }}"
+      tags: pre_commands
 
     - name: "Install app | Add/Update webapp repo"
       git:
@@ -81,13 +92,13 @@
 
     - name: Install app | Make sure the app directories with ACLs are present
       file:
-        path: "{{ webapp.installation_path }}/{{ name }}/{{ item }}"
+        path: "{{ webapp.installation_path }}/{{ name }}/current/{{ item }}"
         state: directory
       with_items: "{{ app.ACL_dirs | default([]) }}"
 
     - name: Install app | Make sure the ACLs for app directories for webserver user are present
       acl:
-         name: "{{ webapp.installation_path }}/{{ name }}/{{ item }}"
+         name: "{{ webapp.installation_path }}/{{ name }}/current/{{ item }}"
          entity: "{{ apache.user }}"
          etype: user
          permissions: rxw
@@ -96,7 +107,7 @@
 
     - name: Install app | Make sure the ACLs for app directories with default and webserver user are present
       acl:
-         name: "{{ webapp.installation_path }}/{{ name }}/{{ item }}"
+         name: "{{ webapp.installation_path }}/{{ name }}/current/{{ item }}"
          entity: "{{ apache.user }}"
          etype: user
          permissions: rxw
@@ -106,7 +117,7 @@
 
     - name: Install app | Make sure the ACLs for app directories with current user are present
       acl:
-         name: "{{ webapp.installation_path }}/{{ name }}/{{ item }}"
+         name: "{{ webapp.installation_path }}/{{ name }}/current/{{ item }}"
          entity: "{{ ansible_user_id }}"
          etype: user
          permissions: rxw
@@ -141,7 +152,7 @@
 
     #- pause: prompt="Make sure the above commands are correct, they will be executed."
 
-    - name: Install app | Run install commands
+    - name: Install app | Run post install commands
       shell: "{{ item }}"
       args:
         chdir: "/var/www/{{ name }}/current"
@@ -149,6 +160,6 @@
         SYMFONY_ENV: prod
       ignore_errors: yes
       changed_when: False
-      with_items: "{{ app.install_commands | default([]) }}"
-      tags: commands
+      with_items: "{{ app.post_commands | default([]) }}"
+      tags: post_commands
   when: app.enabled is not defined
