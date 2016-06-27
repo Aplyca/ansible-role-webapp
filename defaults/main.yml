@@ -1,10 +1,7 @@
 ---
 webapp:
   installation_path: /var/www
-  apps:
-    app:
-      repo:
-        url: "https://github.com/Aplyca/ansible-role-webapp.git"
+  apps: []
 
 php:
   opcache:
@@ -15,12 +12,3 @@ php:
   core:
     realpath_cache_size: 2046K
     realpath_cache_ttl: 3600
-
-apache:
-  virtualhosts:
-    - ServerName: "app.com"
-      ServerAlias:
-        - "*.app.com"
-      DocumentRoot: "{{ webapp.installation_path }}/app/current/tests/webapp/web"
-      IncludeOptional:
-        - "{{ webapp.installation_path }}/app/current/tests/webapp/include.conf"

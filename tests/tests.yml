@@ -1,0 +1,15 @@
+---
+webapp:
+  apps:
+    - name: app
+      repo:
+        url: "https://github.com/Aplyca/ansible-role-webapp.git"
+        
+apache:
+  virtualhosts:
+    - ServerName: "app.com"
+      ServerAlias:
+        - "*.app.com"
+      DocumentRoot: "{{ webapp.installation_path }}/app/current/tests/webapp/web"
+      IncludeOptional:
+        - "{{ webapp.installation_path }}/app/current/tests/webapp/include.conf"
