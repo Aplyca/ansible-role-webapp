@@ -1,4 +1,5 @@
 ---
-- hosts: web
+- name: Provision WebApp
+  hosts: all
   roles:
-    - aplyca.WebApp
+    - { role: Aplyca.WebApp, tags: ["webapp"] }

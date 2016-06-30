@@ -1,4 +1,5 @@
 .vagrant
-custom*
+custom
 .vault
-playbooks.retry
+*.retry
+**/roles
