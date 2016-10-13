@@ -1,4 +1,7 @@
 ---
+- debug: var=webapp verbosity=1
+  tags: vars
+
 - name: Make sure the installation path exists is present
   become: yes
   file:
@@ -14,4 +17,3 @@
   loop_control:
     loop_var: app_item
   tags: apps
-
