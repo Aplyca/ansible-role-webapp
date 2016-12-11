@@ -12,8 +12,6 @@
 - name: Provision Apps
   include_role:
     name: Aplyca.AppProvision
-  vars:
-    app: "{{ app }}"
   with_items: "{{ webapp.apps | default([]) }}"
   loop_control:
     loop_var: app
