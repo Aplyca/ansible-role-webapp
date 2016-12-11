@@ -2,18 +2,16 @@
 - debug: var=webapp verbosity=1
   tags: vars
 
-- name: Make sure the installation path exists is present
-  become: yes
-  file:
-    path: "{{ webapp.installation_path }}"
-    state: directory
-    mode: 0777
-    owner: "{{ ansible_user_id }}"
-  tags: apps
-
-- name: "Install Apps"
+- name: "Download Apps"
   include: app.yml
   with_items: "{{ webapp.apps | default([]) }}"
   loop_control:
     loop_var: app_item
   tags: apps
+
+- name: Provision Apps
+  include_role:
+    name: Aplyca.AppProvision
+  vars:
+    app: "{{ item }}"
+  with_items: "{{ webapp.apps | default([]) }}"

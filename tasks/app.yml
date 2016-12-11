@@ -4,28 +4,22 @@
   tags: always
 
 - name: Install app | Make sure the current directory of the webapp is present
+  become: yes
   file:
-    path: "{{ webapp.installation_path }}/{{ app_item.name }}/releases/current"
+    path: "{{ webapp.installation_path }}/{{ app_item.name }}/{{ webapp.release_dir }}"
     state: directory
-    mode: 0755
+    mode: 0775
+    follow: yes
+    recurse: yes
+    owner: "{{ ansible_user_id }}"
 
 - name: Install app | Make sure the app symlink of the webapp is present
   file:
-    src: "releases/current"
+    src: "{{ webapp.release_dir }}"
     dest: "{{ webapp.installation_path }}/{{ app_item.name }}/current"
     state: link
     force: yes
-
-- name: Install app | Run pre install commands
-  shell: "{{ item }}"
-  args:
-    chdir: "{{ webapp.installation_path }}/{{ app_item.name }}/current"
-  environment:
-    SYMFONY_ENV: prod
-  ignore_errors: yes
-  changed_when: False
-  with_items: "{{ app_item.pre_commands | default([]) }}"
-  tags: pre_commands
+  when: webapp.release_dir != ""
 
 - name: "Install app | Add/Update webapp repo"
   git:
@@ -36,129 +30,3 @@
     accept_hostkey: true
   when: app_item.repo.url is defined and app_item.repo.url != None
   tags: pull
-
-- name: Install app | Ensure app directories exist
-  file:
-    path: "{{ webapp.installation_path }}/{{ app_item.name }}/{{ item }}"
-    state: directory
-  with_items: "{{ app_item.app_dirs | default([]) }}"
-
-- name: Install app | Make sure the Storage directories are present
-  become: yes
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: 0775
-    owner: "{{ ansible_user_id }}"
-  with_items: "{{ app_item.storage | default([]) }}"
-
-- name: Install app | Make sure the storage ACLs for webserver user are present
-  acl:
-     name: "{{ item }}"
-     entity: "{{ apache.user }}"
-     etype: user
-     permissions: rxw
-     state: present
-  with_items: "{{ app_item.storage | default([]) }}"
-
-- name: Install app | Make sure the storage ACLs with default and webserver user are present
-  acl:
-     name: "{{ item }}"
-     entity: "{{ apache.user }}"
-     etype: user
-     permissions: rxw
-     default: yes
-     state: present
-  with_items: "{{ app_item.storage | default([]) }}"
-
-- name: Install app | Make sure the storage ACLs with current user are present
-  acl:
-     name: "{{ item }}"
-     entity: "{{ ansible_user_id }}"
-     etype: user
-     permissions: rxw
-     default: yes
-     state: present
-  with_items: "{{ app_item.storage | default([]) }}"
-
-- name: Install app | Make sure the app directories with ACLs are present
-  file:
-    path: "{{ webapp.installation_path }}/{{ app_item.name }}/current/{{ item }}"
-    state: directory
-  with_items: "{{ app_item.ACL_dirs | default([]) }}"
-
-- name: Install app | Make sure the ACLs for app directories for webserver user are present
-  acl:
-     name: "{{ webapp.installation_path }}/{{ app_item.name }}/current/{{ item }}"
-     entity: "{{ apache.user }}"
-     etype: user
-     permissions: rxw
-     state: present
-  with_items: "{{ app_item.ACL_dirs | default([]) }}"
-
-- name: Install app | Make sure the ACLs for app directories with default and webserver user are present
-  acl:
-     name: "{{ webapp.installation_path }}/{{ app_item.name }}/current/{{ item }}"
-     entity: "{{ apache.user }}"
-     etype: user
-     permissions: rxw
-     default: yes
-     state: present
-  with_items: "{{ app_item.ACL_dirs | default([]) }}"
-
-- name: Install app | Make sure the ACLs for app directories with current user are present
-  acl:
-     name: "{{ webapp.installation_path }}/{{ app_item.name }}/current/{{ item }}"
-     entity: "{{ ansible_user_id }}"
-     etype: user
-     permissions: rxw
-     default: yes
-     state: present
-  with_items: "{{ app_item.ACL_dirs | default([]) }}"
-
-- name: Install app | Create symlinks to storage
-  file:
-    src: "{{ item.src }}"
-    dest: "{{ webapp.installation_path }}/{{ app_item.name }}/current/{{ item.dest }}"
-    state: link
-    force: yes
-  with_items: "{{ app_item.links_to_storage | default([]) }}"
-
-- name: Install app | Create internal symlinks
-  file:
-    src: "{{ item.src }}"
-    dest: "{{ webapp.installation_path }}/{{ app_item.name }}/current/{{ item.dest }}"
-    state: link
-    force: yes
-  with_items: "{{ app_item.internal_links | default([]) }}"
-
-- name: Install app | Ensure installation settings directories are present
-  shell: "mkdir -p $(dirname {{ item.dest }}) && touch {{ item.dest }}"
-  args:
-    chdir: "{{ webapp.installation_path }}/{{ app_item.name }}/current"    
-  with_items: "{{ app_item.config | default([]) }}"
-  no_log: True
-  tags: config
-
-- name: Install app | Ensure installation settings are present
-  template:
-    src: "config.j2"
-    dest: "{{ webapp.installation_path }}/{{ app_item.name }}/current/{{ item.dest }}"
-  with_items: "{{ app_item.config | default([]) }}"
-  no_log: True
-  tags: config
-
-#- pause: prompt="Make sure the above commands are correct, they will be executed."
-
-- name: Install app | Run post install commands
-  shell: "{{ item }}"
-  args:
-    chdir: "{{ webapp.installation_path }}/{{ app_item.name }}/current"
-  environment:
-    SYMFONY_ENV: prod
-  ignore_errors: yes
-  changed_when: False
-  with_items: "{{ app_item.post_commands | default([]) }}"
-  async: 3600
-  poll: 0  
-  tags: post_commands

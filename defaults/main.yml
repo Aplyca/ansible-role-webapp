@@ -1,6 +1,7 @@
 ---
 webapp:
   installation_path: /var/www
+  release_dir: "releases/current"
   apps: []
 
 php:
