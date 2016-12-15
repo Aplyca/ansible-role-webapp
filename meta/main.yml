@@ -1,7 +1,5 @@
 ---
-dependencies:
-  - { role: Aplyca.Essentials, tags: ["essentials"] }
-  - { role: Aplyca.LAMP, tags: ["lamp"] }
+dependencies: []
 
 galaxy_info:
   author: Aplyca

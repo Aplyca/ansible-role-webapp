@@ -8,9 +8,6 @@
   file:
     path: "{{ webapp.installation_path }}/{{ app_item.name }}/{{ webapp.release_dir }}"
     state: directory
-    mode: 0775
-    follow: yes
-    recurse: yes
     owner: "{{ ansible_user_id }}"
 
 - name: Install app | Make sure the app symlink of the webapp is present
