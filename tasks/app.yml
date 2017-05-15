@@ -25,5 +25,5 @@
     version: "{{ app_item.repo.version | default('master') }}"
     update: yes
     accept_hostkey: true
-  when: app_item.repo.url is defined and app_item.repo.url != None
+  when: app_item.repo is defined and app_item.repo.url is defined and app_item.repo.url != None
   tags: pull
