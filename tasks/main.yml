@@ -2,6 +2,12 @@
 - debug: var=webapp verbosity=1
   tags: vars
 
+- name: Make sure the base directory of the webapps is present
+  become: yes
+  file:
+    path: "{{ webapp.installation_path }}"
+    state: directory
+
 - name: "Download Apps"
   include: app.yml
   with_items: "{{ webapp.apps | default([]) }}"
@@ -15,3 +21,5 @@
   with_items: "{{ webapp.apps | default([]) }}"
   loop_control:
     loop_var: app
+  become: true
+  become_user: "{{ app.owner | default(ansible_user_id) }}"
