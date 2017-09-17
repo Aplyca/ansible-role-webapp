@@ -1,15 +1,11 @@
 ---
 webapp:
+  release_dir: ""
+  installation_path: "/home/{{ ansible_user_id }}"
   apps:
     - name: app
+      directories:
+        - /mnt/app/s3
+        - /mnt/app/s3fs
       repo:
-        url: "https://github.com/Aplyca/ansible-role-webapp.git"
-        
-apache:
-  virtualhosts:
-    - ServerName: "app.com"
-      ServerAlias:
-        - "*.app.com"
-      DocumentRoot: "{{ webapp.installation_path }}/app/current/tests/webapp/web"
-      IncludeOptional:
-        - "{{ webapp.installation_path }}/app/current/tests/webapp/include.conf"
+        url: "https://github.com/Aplyca/ansible-role-webapp.git"        

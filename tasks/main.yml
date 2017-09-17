@@ -12,7 +12,7 @@
   include: app.yml
   with_items: "{{ webapp.apps | default([]) }}"
   loop_control:
-    loop_var: app_item
+    loop_var: app
   tags: apps
 
 - name: Provision Apps

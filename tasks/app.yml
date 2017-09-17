@@ -1,34 +1,45 @@
 ---
 - debug:
-    msg: "Installing app '{{ app_item.name }}'"
+    msg: "Installing app '{{ app.name }}'"
   tags: always
 
 - name: Install app | Make sure the current directory of the webapp is present
   become: yes
   file:
-    path: "{{ webapp.installation_path }}/{{ app_item.name }}/{{ webapp.release_dir }}"
+    path: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.release_dir }}"
     state: directory
-    owner: "{{ app_item.owner | default(ansible_user_id) }}"
-    group: "{{ app_item.group | default() }}"
+    owner: "{{ app.owner | default(ansible_user_id) }}"
+    group: "{{ app.group | default(ansible_user_id) }}"
+
+- name: Make sure app directories are present
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: 0775
+    force: yes
+  with_items: "{{ app.directories }}"
 
 - name: Install App
   block:
     - name: Install app | Make sure the app symlink of the webapp is present
       file:
         src: "{{ webapp.release_dir }}"
-        dest: "{{ webapp.installation_path }}/{{ app_item.name }}/current"
+        dest: "{{ webapp.installation_path }}/{{ app.name }}/current"
         state: link
         force: yes
       when: webapp.release_dir != ""
 
     - name: "Install app | Add/Update webapp repo"
       git:
-        repo: "{{ app_item.repo.url }}"
-        dest: "{{ webapp.installation_path }}/{{ app_item.name }}/current"
-        version: "{{ app_item.repo.version | default('master') }}"
+        repo: "{{ app.repo.url }}"
+        dest: "{{ webapp.installation_path }}/{{ app.name }}/current"
+        version: "{{ app.repo.version | default('master') }}"
         update: yes
         accept_hostkey: true
-      when: app_item.repo is defined and app_item.repo.url is defined and app_item.repo.url != None
+      when: app.repo is defined and app.repo.url is defined and app.repo.url != None
       tags: pull
-  become: true    
-  become_user: "{{ app_item.owner | default(ansible_user_id) }}"
+  become: true
+  become_user: "{{ app.owner | default(ansible_user_id) }}"
