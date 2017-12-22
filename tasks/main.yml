@@ -9,7 +9,7 @@
     state: directory
 
 - name: "Download Apps"
-  include: app.yml
+  include_tasks: app.yml
   with_items: "{{ webapp.apps | default([]) }}"
   loop_control:
     loop_var: app
