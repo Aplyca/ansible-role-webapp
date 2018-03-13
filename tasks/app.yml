@@ -27,7 +27,7 @@
     - name: Install app | Make sure the app symlink of the webapp is present
       file:
         src: "{{ webapp.release_dir }}"
-        dest: "{{ webapp.installation_path }}/{{ app.name }}/current"
+        dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.current_dir }}"
         state: link
         force: yes
       when: webapp.release_dir != ""
@@ -35,7 +35,7 @@
     - name: "Install app | Add/Update webapp repo"
       git:
         repo: "{{ app.repo.url }}"
-        dest: "{{ webapp.installation_path }}/{{ app.name }}/current"
+        dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.current_dir }}"
         version: "{{ app.repo.version | default('master') }}"
         update: yes
         accept_hostkey: true

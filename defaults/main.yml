@@ -2,6 +2,7 @@
 webapp:
   installation_path: /var/www
   release_dir: "releases/current"
+  current_dir: "current"
   apps: []
 
 php:
