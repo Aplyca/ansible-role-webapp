@@ -20,7 +20,7 @@
     group: "{{ ansible_user_id }}"
     mode: 0775
     force: yes
-  with_items: "{{ app.directories }}"
+  with_items: "{{ app.directories | default([]) }}"
 
 - name: Install App
   block:
