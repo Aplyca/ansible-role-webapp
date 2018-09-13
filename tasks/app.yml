@@ -27,7 +27,7 @@
     - name: "Install app | Add/Update webapp repo"
       git:
         repo: "{{ app.repo.url }}"
-        dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.current_dir }}"
+        dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.release_dir }}/{{ webapp.current_dir }}"
         version: "{{ app.repo.version | default('master') }}"
         update: yes
         accept_hostkey: true
