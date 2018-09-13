@@ -24,14 +24,6 @@
 
 - name: Install App
   block:
-    - name: Install app | Make sure the app symlink of the webapp is present
-      file:
-        src: "{{ webapp.release_dir }}"
-        dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.current_dir }}"
-        state: link
-        force: yes
-      when: webapp.release_dir != ""
-
     - name: "Install app | Add/Update webapp repo"
       git:
         repo: "{{ app.repo.url }}"
@@ -41,5 +33,13 @@
         accept_hostkey: true
       when: app.repo is defined and app.repo.url is defined and app.repo.url != None
       tags: pull
+      
+    - name: Install app | Make sure the app symlink of the webapp is present
+      file:
+        src: "{{ webapp.release_dir }}"
+        dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.current_dir }}"
+        state: link
+        force: yes
+      when: webapp.release_dir != ""
   become: true
   become_user: "{{ app.owner | default(ansible_user_id) }}"
