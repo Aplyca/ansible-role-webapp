@@ -1,5 +1,6 @@
 ---
-dependencies: []
+dependencies:
+  - { role: Aplyca.AppProvision, tags: ["appprovision"] }
 
 galaxy_info:
   author: Aplyca
