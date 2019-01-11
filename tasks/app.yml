@@ -1,45 +1,34 @@
 ---
 - debug:
-    msg: "Installing app '{{ app.name }}'"
+      msg: "Installing app '{{ app.name }}'"
   tags: always
 
 - name: Install app | Make sure the current directory of the webapp is present
   become: yes
   file:
-    path: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.release_dir }}"
-    state: directory
-    owner: "{{ app.owner | default(ansible_user_id) }}"
-    group: "{{ app.group | default(ansible_user_id) }}"
-
-- name: Make sure app directories are present
-  become: yes
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
-    mode: 0775
-    force: yes
-  with_items: "{{ app.directories | default([]) }}"
+      path: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.release_dir }}"
+      state: directory
+      owner: "{{ app.owner | default(ansible_user_id) }}"
+      group: "{{ app.group | default(ansible_user_id) }}"
 
 - name: Install App
   block:
-    - name: Install app | Make sure the app symlink of the webapp is present
-      file:
-        src: "{{ webapp.release_dir }}"
-        dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.current_dir }}"
-        state: link
-        force: yes
-      when: webapp.release_dir != ""
+      - name: "Install app | Add/Update webapp repo"
+        git:
+            repo: "{{ app.repo.url }}"
+            dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.release_dir }}"
+            version: "{{ app.repo.version | default('master') }}"
+            update: yes
+            accept_hostkey: true
+        when: app.repo is defined and app.repo.url is defined and app.repo.url != None
+        tags: pull
 
-    - name: "Install app | Add/Update webapp repo"
-      git:
-        repo: "{{ app.repo.url }}"
-        dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.current_dir }}"
-        version: "{{ app.repo.version | default('master') }}"
-        update: yes
-        accept_hostkey: true
-      when: app.repo is defined and app.repo.url is defined and app.repo.url != None
-      tags: pull
+      - name: Install app | Make sure the app symlink of the webapp is present
+        file:
+            src: "{{ webapp.release_dir }}"
+            dest: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.current_dir }}"
+            state: link
+            force: yes
+        when: webapp.release_dir != ""
   become: true
   become_user: "{{ app.owner | default(ansible_user_id) }}"

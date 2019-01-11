@@ -5,21 +5,24 @@
 - name: Make sure the base directory of the webapps is present
   become: yes
   file:
-    path: "{{ webapp.installation_path }}"
-    state: directory
+      path: "{{ webapp.installation_path }}"
+      state: directory
+      owner: "{{ webapp.owner | default(ansible_user_id) }}"
 
 - name: "Download Apps"
   include_tasks: app.yml
   with_items: "{{ webapp.apps | default([]) }}"
   loop_control:
-    loop_var: app
+      loop_var: app
   tags: apps
 
 - name: Provision Apps
   include_role:
-    name: Aplyca.AppProvision
+      name: Aplyca.AppProvision
   with_items: "{{ webapp.apps | default([]) }}"
   loop_control:
-    loop_var: app
-  become: true
-  become_user: "{{ app.owner | default(ansible_user_id) }}"
+      loop_var: app
+  vars:
+      installation_path: "{{ webapp.installation_path }}/{{ app.name }}/{{ webapp.release_dir }}"
+      ansible_become: yes
+      ansible_become_user: "{{ app.owner | default(ansible_user_id) }}"
